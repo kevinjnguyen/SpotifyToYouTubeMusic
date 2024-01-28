@@ -1,4 +1,4 @@
-from model import artist, playlist, track
+from model import artist, track
 from model.spotify import spotify_user_playlists
 
 
@@ -12,7 +12,7 @@ test_track = track.Track(test_track_name, test_track_id, test_duration, test_art
 test_playlist_name = "Anime Now"
 test_playlist_description = "An anime playlist"
 test_playlist_id = "some-playlist-id"
-test_playlist = playlist.Playlist(test_playlist_name, test_playlist_id, test_playlist_description)
+test_playlist = spotify_user_playlists.SpotifyPlaylist(test_playlist_name, test_playlist_id, test_playlist_description)
 
 
 def test_spotify_user_playlists():

@@ -1,10 +1,9 @@
 from typing import List
-from model import playlist
-from model.spotify.spotify_playlist import LikedSongsPlaylist
+from model.spotify.spotify_playlist import LikedSongsPlaylist, SpotifyPlaylist
 
 
 class UserPlaylists(object):
-    def __init__(self, user_playlists: List[playlist.Playlist], liked_songs_playlist: LikedSongsPlaylist):
+    def __init__(self, user_playlists: List[SpotifyPlaylist], liked_songs_playlist: LikedSongsPlaylist):
         self.user_playlists = user_playlists
         self.liked_songs_playlist = liked_songs_playlist
 
@@ -14,14 +13,14 @@ class UserPlaylists(object):
 
 class UserPlaylistsBuilder(object):
 
-    playlists: List[playlist.Playlist]
+    playlists: List[SpotifyPlaylist]
     liked_songs_playlist: LikedSongsPlaylist
 
     def __init__(self):
         self.playlists = []
         self.liked_songs_playlist = LikedSongsPlaylist()
 
-    def add_playlist(self, playlist: playlist.Playlist) -> None:
+    def add_playlist(self, playlist: SpotifyPlaylist) -> None:
         self.playlists.append(playlist)
 
     def set_liked_songs(self, liked_songs_playlist: LikedSongsPlaylist) -> None:
