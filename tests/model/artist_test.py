@@ -6,7 +6,6 @@ test_id = "some-random-id"
 
 
 def test_artist_str():
-
     artist = Artist(test_artist, test_id)
     expected = "Artist - Name: YOASOBI, ID: some-random-id"
     assert str(artist) == expected
