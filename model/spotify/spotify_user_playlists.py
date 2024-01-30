@@ -10,6 +10,15 @@ class UserPlaylists(object):
     def get_num_playlists(self) -> int:
         return len(self.user_playlists) + 1
 
+    def __eq__(self, other) -> bool:
+        """Overrides the default implementation"""
+        if isinstance(other, UserPlaylists):
+            return (
+                set(self.user_playlists) == set(other.user_playlists)
+                and self.liked_songs_playlist == other.liked_songs_playlist
+            )
+        return False
+
 
 class UserPlaylistsBuilder(object):
 

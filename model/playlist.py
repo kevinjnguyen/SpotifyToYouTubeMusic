@@ -20,3 +20,14 @@ class Playlist(object):
 
     def __repr__(self) -> str:
         return f"Playlist({self.name}, {self.id}, {self.description}, {self.tracks})"
+
+    def __eq__(self, other) -> bool:
+        """Overrides the default implementation"""
+        if isinstance(other, Playlist):
+            return (
+                self.name == other.id
+                and self.id == other.id
+                and self.description == other.description
+                and set(self.tracks) == set(other.tracks)
+            )
+        return False
