@@ -55,9 +55,34 @@ def test_jobs_data():
     fetched_job = jobs_data.get_job(test_spotify_playlist)
     assert fetched_job == new_job
 
-    with pytest.raises(Exception) as e_info:
+
+def test_jobs_data_no_such_job_throws_exception():
+    tf = tempfile.NamedTemporaryFile()
+    tf.close()
+    jobs_data = migrator_job.JobsData(tf.name)
+
+    with pytest.raises(migrator_job.NoSuchJobException) as e_info:
         new_playlist = spotify_playlist.SpotifyPlaylist("from-spotify", "some-other-id", "some-spotify-description")
         jobs_data.get_job(new_playlist)
+
+
+def test_jobs_data_with_existing_no_such_job_throws_exception():
+    tf = tempfile.NamedTemporaryFile()
+    tf.close()
+    new_job = migrator_job.Job(test_spotify_playlist, test_youtube_playlist)
+    jobs_data = migrator_job.JobsData(tf.name, jobs=[new_job])
+
+    with pytest.raises(migrator_job.NoSuchJobException) as e_info:
+        new_playlist = spotify_playlist.SpotifyPlaylist("from-spotify", "some-other-id", "some-spotify-description")
+        jobs_data.get_job(new_playlist)
+
+
+def test_jobs_duplicate_job_throws_exception():
+    tf = tempfile.NamedTemporaryFile()
+    tf.close()
+    new_job = migrator_job.Job(test_spotify_playlist, test_youtube_playlist)
+    with pytest.raises(migrator_job.DuplicateFromPlaylistException) as e_info:
+        migrator_job.JobsData(tf.name, jobs=[new_job, new_job])
 
 
 def test_jobs_data_builder():
@@ -85,4 +110,3 @@ def test_jobs_data_persistence():
     loaded_local_job_data = migrator_job.JobsData(tf.name)
     assert len(loaded_local_job_data.data) == 1
     assert loaded_local_job_data.get_job(test_spotify_playlist) == new_job
-    # assert loaded_local_job_data.data[test_spotify_playlist.id].is_complete() == True

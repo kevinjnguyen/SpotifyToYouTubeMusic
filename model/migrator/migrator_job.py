@@ -52,7 +52,7 @@ class JobsData(local_storage.LocalSerializable):
                     self.data[job.from_playlist.id] = job
 
     def get_job(self, from_playlist: spotify_playlist.SpotifyPlaylist) -> Job:
-        if from_playlist.id in self.data:
+        if self.data is not None and from_playlist.id in self.data:
             return self.data[from_playlist.id]
         raise NoSuchJobException(from_playlist.id)
 
