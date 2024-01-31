@@ -25,7 +25,7 @@ class Playlist(object):
         """Overrides the default implementation"""
         if isinstance(other, Playlist):
             return (
-                self.name == other.id
+                self.name == other.name
                 and self.id == other.id
                 and self.description == other.description
                 and set(self.tracks) == set(other.tracks)
