@@ -16,6 +16,7 @@ class MigratorData(local_storage.LocalSerializable):
     def remove_playlist(self, playlist: playlist.Playlist) -> None:
         if not self.contains_playlist(playlist):
             raise NoSuchPlaylistException(playlist)
+        del self.data[playlist.id]
 
     def contains_playlist(self, playlist: playlist.Playlist) -> bool:
         return playlist.id in self.data
