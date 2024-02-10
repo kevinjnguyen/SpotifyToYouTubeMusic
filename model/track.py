@@ -24,3 +24,13 @@ class Track(object):
                 and self.duration == other.duration
             )
         return False
+
+
+class NoArtistException(Exception):
+    def __init__(self):
+        super().__init__()
+
+
+class InvalidTrackException(Exception):
+    def __init__(self, field_name: str):
+        super().__init__(f"missing field: {field_name}")

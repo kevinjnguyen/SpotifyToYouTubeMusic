@@ -1,11 +1,16 @@
+import logging
+from typing import List
 from adaptor import local_storage
 from model import playlist
+
+logger = logging.getLogger(__name__)
 
 
 class MigratorData(local_storage.LocalSerializable):
     def __init__(self, local_file_name: str):
         super().__init__(local_file_name)
         if self.data is None:
+            logger.info("No previous migrator data saved.")
             self.data = {}
 
     def add_playlist(self, playlist: playlist.Playlist) -> None:
@@ -34,6 +39,7 @@ class MigratorData(local_storage.LocalSerializable):
 class AlreadyProcessedException(Exception):
     def __init__(self, playlist: playlist.Playlist):
         super().__init__(f"already processed: {playlist}")
+        self.playlist = playlist
 
 
 class NoSuchPlaylistException(Exception):

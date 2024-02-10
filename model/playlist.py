@@ -3,16 +3,13 @@ from model import track
 
 
 class Playlist(object):
-    def __init__(self, name: str, id: str, description: str):
+    def __init__(self, name: str, id: str, description: str, tracks: List[track.Track]):
         self.name = name
         self.id = id
         self.description = description
-        self.tracks: List[track.Track] = []
+        self.tracks: List[track.Track] = tracks
 
-    def add(self, track: track.Track) -> None:
-        self.tracks.append(track)
-
-    def size(self) -> int:
+    def num_tracks(self) -> int:
         return len(self.tracks)
 
     def __str__(self) -> str:
@@ -31,3 +28,12 @@ class Playlist(object):
                 and set(self.tracks) == set(other.tracks)
             )
         return False
+
+class FailedPlaylist(Playlist):
+    def __init__(self, name: str, id: str, description: str):
+        super().__init__(name, id, description)
+
+
+class InvalidPlaylistException(Exception):
+    def __init__(self, field_name: str):
+        super().__init__(f"missing field: {field_name}")
