@@ -51,4 +51,3 @@ class MigratorService(object):
                 logger.info(f"-- Number of playlists for migration: {len(self.migrator.data) - len(self.failures)}")
                 logger.info(f"-- Number of ignored playlists: {len(self.failures)}")
                 self.migrator.save()
-

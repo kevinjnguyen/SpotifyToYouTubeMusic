@@ -29,6 +29,7 @@ class Playlist(object):
             )
         return False
 
+
 class FailedPlaylist(Playlist):
     def __init__(self, name: str, id: str, description: str):
         super().__init__(name, id, description)

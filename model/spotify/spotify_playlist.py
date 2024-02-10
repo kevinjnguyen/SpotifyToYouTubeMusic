@@ -14,8 +14,15 @@ class SpotifyPlaylist(playlist.Playlist):
             return self.name == other.name and self.id == other.id and self.description == other.description
         return False
 
+
 class LikedSongsPlaylist(SpotifyPlaylist):
-    def __init__(self, name: str = 'Liked Songs', id: SpotifyPlaylistId = SpotifyPlaylistId('api_liked_songs'), description: str = 'Liked songs on Spotify', tracks: List[track.Track] = []):
+    def __init__(
+        self,
+        name: str = "Liked Songs",
+        id: SpotifyPlaylistId = SpotifyPlaylistId("api_liked_songs"),
+        description: str = "Liked songs on Spotify",
+        tracks: List[track.Track] = [],
+    ):
         super().__init__(name, id, description, tracks)
 
     def __eq__(self, other) -> bool:
