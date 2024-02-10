@@ -1,20 +1,48 @@
+from dataclasses import dataclass
 import logging
+from typing import List, Optional
 from dao.spotify.spotify_playlist_dao import SpotifyPlaylistDAO
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
+from model.spotify import spotify_playlist
+
 
 logger = logging.getLogger(__name__)
 
 
-class SpotifyMusicService(object):
-    scope = "playlist-read-private,playlist-read-collaborative,user-library-read"
+@dataclass(frozen=True)
+class CurrentUserPlaylists:
+    playlists: List[spotify_playlist.SpotifyPlaylist]
 
-    def __init__(self, auth_scope: str = scope, api_delay: int = 0.3):
-        super().__init__()
-        logger.info("Initializing Spotify")
-        self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=auth_scope))
-        self.api_delay = api_delay
-        logger.info(f"Successfully initialized Spotify. Scope: {auth_scope}, API Delay: {api_delay} seconds")
-        self.dao = SpotifyPlaylistDAO(self.sp, self.api_delay)
+
+class SpotifyMusicService:
+
+    def __init__(self, spotify_playlist_dao: Optional[SpotifyPlaylistDAO] = None):
+        if spotify_playlist_dao is None:
+            self.dao = SpotifyPlaylistDAO(self.get_spotify_api())
+        else:
+            self.dao = spotify_playlist_dao
+
+    def get_spotify_api(
+        self, auth_scope="playlist-read-private,playlist-read-collaborative,user-library-read"
+    ) -> spotipy.Spotify:
+        logger.debug(f"Initializing Spotify API with scope: {auth_scope}")
+        return spotipy.Spotify(auth_manager=SpotifyOAuth(scope=auth_scope))
+
+    def get_current_user_playlists(
+        self, include_liked_songs: bool = True, ignore_failures: bool = True
+    ) -> CurrentUserPlaylists:
+        all_playlist_ids = self.dao.get_all_playlists()
+        all_playlists: List[spotify_playlist.SpotifyPlaylist] = []
+        for playlist_id in all_playlist_ids:
+            try:
+                all_playlists.append(self.dao.get_playlist(playlist_id))
+            except Exception as e:
+                if ignore_failures:
+                    logger.warning(f"Failed to process playlist ID: {playlist_id}")
+                else:
+                    raise e
+
+        return CurrentUserPlaylists(all_playlists)

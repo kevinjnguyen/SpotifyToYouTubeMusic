@@ -47,14 +47,14 @@ class JobsData(local_storage.LocalSerializable):
             self.data = {}
             for job in jobs:
                 if job.from_playlist.id in self.data:
-                    raise DuplicateFromPlaylistException(job.from_playlist.id)
+                    raise DuplicateFromPlaylistException(job.from_playlist.id.id)
                 else:
                     self.data[job.from_playlist.id] = job
 
     def get_job(self, from_playlist: spotify_playlist.SpotifyPlaylist) -> Job:
         if self.data is not None and from_playlist.id in self.data:
             return self.data[from_playlist.id]
-        raise NoSuchJobException(from_playlist.id)
+        raise NoSuchJobException(from_playlist.id.id)
 
 
 class JobsBuilder(object):
