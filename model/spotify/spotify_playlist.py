@@ -15,6 +15,7 @@ class SpotifyPlaylist(playlist.Playlist):
         super().__init__(name, id.id, description, tracks)
 
 
+@dataclass(frozen=True)
 class LikedSongsPlaylist(SpotifyPlaylist):
     def __init__(
         self,
@@ -24,10 +25,3 @@ class LikedSongsPlaylist(SpotifyPlaylist):
         tracks: List[track.Track] = [],
     ):
         super().__init__(name, id, description, tracks)
-
-    def __eq__(self, other) -> bool:
-        """Overrides the default implementation"""
-        # TODO: Check tracks
-        if isinstance(other, LikedSongsPlaylist):
-            return self.name == other.name and self.id == other.id and self.description == other.description
-        return False

@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(frozen=True)
 class SpotifyPlaylistId:
-    def __init__(self, id: str):
-        self.id = id
+    id: str
