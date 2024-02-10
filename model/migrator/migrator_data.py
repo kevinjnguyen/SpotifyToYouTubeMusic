@@ -1,5 +1,4 @@
 import logging
-from typing import List
 from adaptor import local_storage
 from model import playlist
 

@@ -1,8 +1,5 @@
 import logging
-import traceback
-from typing import List, Optional
 from model.migrator import migrator_data
-from model.spotify import spotify_playlist
 from service import spotify_music_service, youtube_music_service
 
 default_migrator_file = "migrator.data"
