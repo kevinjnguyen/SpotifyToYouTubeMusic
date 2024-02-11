@@ -48,7 +48,7 @@ class SpotifyMusicService:
                 all_playlists.append(self.dao.get_playlist(playlist_id, logger=child_logger))
             except Exception as e:
                 if ignore_failures:
-                    child_logger.warning(f"Failed to process playlist ID: {playlist_id}: {e}")
+                    child_logger.error(f"Failed to process playlist ID: {playlist_id}: {e}")
                 else:
                     raise SpotifyMusicServiceException(e)
 
@@ -58,7 +58,7 @@ class SpotifyMusicService:
                 all_playlists.append(liked_playlist)
         except Exception as e:
             if ignore_failures:
-                logger.warning(f"Failed to process liked playlist: {e}")
+                logger.error(f"Failed to process liked playlist: {e}")
             else:
                 raise SpotifyMusicServiceException(e)
 
