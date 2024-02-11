@@ -17,6 +17,11 @@ class CurrentUserPlaylists:
     playlists: List[spotify_playlist.SpotifyPlaylist]
 
 
+@dataclass(frozen=True)
+class SpotifyMusicServiceException(Exception):
+    e: Exception
+
+
 class SpotifyMusicService:
 
     def __init__(self, spotify_playlist_dao: Optional[SpotifyPlaylistDAO] = None):
@@ -41,8 +46,18 @@ class SpotifyMusicService:
                 all_playlists.append(self.dao.get_playlist(playlist_id))
             except Exception as e:
                 if ignore_failures:
-                    logger.warning(f"Failed to process playlist ID: {playlist_id}")
+                    logger.warning(f"Failed to process playlist ID: {playlist_id}: {e}")
                 else:
-                    raise e
+                    raise SpotifyMusicServiceException(e)
+
+        try:
+            if include_liked_songs:
+                liked_playlist = self.dao.get_liked_playlist()
+                all_playlists.append(liked_playlist)
+        except Exception as e:
+            if ignore_failures:
+                logger.warning(f"Failed to process liked playlist: {e}")
+            else:
+                raise SpotifyMusicServiceException(e)
 
         return CurrentUserPlaylists(all_playlists)

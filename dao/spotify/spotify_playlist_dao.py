@@ -50,7 +50,7 @@ class SpotifyPlaylistDAO:
         tracks = self.get_all_tracks(self, playlist_id)
         return spotify_playlist.SpotifyPlaylist(name, id, description, tracks)
 
-    def get_liked_playlist(self, playlist_id: SpotifyPlaylistId) -> spotify_playlist.LikedSongsPlaylist:
+    def get_liked_playlist(self) -> spotify_playlist.LikedSongsPlaylist:
         playlist_tracks: List[track.Track] = []
         next_batch = self.api.current_user_saved_tracks()
         SpotifyPlaylistDAO.verifyFieldExists(next_batch, "items")
@@ -59,7 +59,7 @@ class SpotifyPlaylistDAO:
                 spotify_track = SpotifyPlaylistDAO.parse_track(api_track)
                 playlist_tracks.append(spotify_track)
             time.sleep(self.api_delay)
-            next_batch = self.api.current_user_saved_tracks(playlist_id, offset=len(playlist_tracks))
+            next_batch = self.api.current_user_saved_tracks(offset=len(playlist_tracks))
         return spotify_playlist.LikedSongsPlaylist()
 
     def get_tracks(self, playlist_id: SpotifyPlaylistId, offset: int = 0, batch_size: int = 10) -> List[track.Track]:
