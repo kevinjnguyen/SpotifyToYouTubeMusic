@@ -37,7 +37,7 @@ def test_get_current_user_playlists_single_playlist(mock_spotify):
 @patch("dao.spotify.spotify_playlist_dao.SpotifyPlaylistDAO")
 def test_get_current_user_playlists_multiple_playlists(mock_spotify):
     expected_playlists = [generate_playlist(num=1), generate_playlist(num=2)]
-    mock_playlist_ids = [expected_playlists[0].id, expected_playlists[1].id]
+    mock_playlist_ids = [expected_playlists[0], expected_playlists[1]]
     mock_spotify.get_all_playlists = Mock(return_value=mock_playlist_ids)
     mock_spotify.get_playlist = get_playlist_side_effect
     music_service = SpotifyMusicService(mock_spotify)
@@ -78,7 +78,7 @@ def test_get_current_user_playlists_no_playlists_includes_liked_songs(mock_spoti
 @patch("dao.spotify.spotify_playlist_dao.SpotifyPlaylistDAO")
 def test_get_current_user_playlists_multiple_playlists_with_liked_songs(mock_spotify):
     expected_playlists = [generate_playlist(num=1), generate_playlist(num=2)]
-    mock_playlist_ids = [expected_playlists[0].id, expected_playlists[1].id]
+    mock_playlist_ids = [expected_playlists[0], expected_playlists[1]]
     mock_spotify.get_all_playlists = Mock(return_value=mock_playlist_ids)
     mock_spotify.get_playlist = get_playlist_side_effect
     mock_spotify.get_liked_playlist = get_liked_playlist_side_effect
@@ -95,7 +95,7 @@ def get_liked_playlist_side_effect():
     return generate_playlist(num=0)
 
 
-def get_playlist_side_effect(value: spotify_playlist.SpotifyPlaylistId):
+def get_playlist_side_effect(value: spotify_playlist.SpotifyPlaylistId, logger):
     if value == spotify_playlist.SpotifyPlaylistId("1"):
         return generate_playlist(num=1)
     elif value == spotify_playlist.SpotifyPlaylistId("2"):

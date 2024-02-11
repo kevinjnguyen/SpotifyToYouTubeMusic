@@ -7,6 +7,7 @@ from service import spotify_music_service, youtube_music_service, migrator_servi
 
 def main():
     spotify = spotify_music_service.SpotifyMusicService()
+    user_playlists = spotify.get_current_user_playlists(ignore_failures=False)
     # youtube = youtube_music_service.YoutubeMusicService()
     # migrator = migrator_service.MigratorService(spotify, youtube)
 

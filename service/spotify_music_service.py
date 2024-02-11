@@ -26,27 +26,29 @@ class SpotifyMusicService:
 
     def __init__(self, spotify_playlist_dao: Optional[SpotifyPlaylistDAO] = None):
         if spotify_playlist_dao is None:
-            self.dao = SpotifyPlaylistDAO(self.get_spotify_api())
+            self.dao = SpotifyPlaylistDAO(self.__get_spotify_api())
         else:
             self.dao = spotify_playlist_dao
 
-    def get_spotify_api(
+    def __get_spotify_api(
         self, auth_scope="playlist-read-private,playlist-read-collaborative,user-library-read"
     ) -> spotipy.Spotify:
-        logger.debug(f"Initializing Spotify API with scope: {auth_scope}")
+        logger.info(f"Initializing Spotify API with scope: {auth_scope}")
         return spotipy.Spotify(auth_manager=SpotifyOAuth(scope=auth_scope))
 
     def get_current_user_playlists(
         self, include_liked_songs: bool = True, ignore_failures: bool = True
     ) -> CurrentUserPlaylists:
         all_playlist_ids = self.dao.get_all_playlists()
+        logger.info(f"Retrieved: {len(all_playlist_ids)} playlists.")
         all_playlists: List[spotify_playlist.SpotifyPlaylist] = []
         for playlist_id in all_playlist_ids:
+            child_logger = logger.getChild(playlist_id.id)
             try:
-                all_playlists.append(self.dao.get_playlist(playlist_id))
+                all_playlists.append(self.dao.get_playlist(playlist_id, logger=child_logger))
             except Exception as e:
                 if ignore_failures:
-                    logger.warning(f"Failed to process playlist ID: {playlist_id}: {e}")
+                    child_logger.warning(f"Failed to process playlist ID: {playlist_id}: {e}")
                 else:
                     raise SpotifyMusicServiceException(e)
 
