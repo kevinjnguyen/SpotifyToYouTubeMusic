@@ -61,7 +61,7 @@ class SpotifyPlaylistDAO:
         name = api_playlist["name"]
         SpotifyPlaylistDAO.verifyFieldExists(api_playlist, "description")
         description = api_playlist["description"]
-        logger.info(f'Processing playlist: Name: {name}, Description: {description}')
+        logger.info(f"Processing playlist: Name: {name}, Description: {description}")
         tracks = self.get_all_tracks(playlist_id, logger=logger)
         return spotify_playlist.SpotifyPlaylist(name, id, description, tracks)
 
