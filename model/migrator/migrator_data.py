@@ -20,9 +20,15 @@ class MigratorStateful:
     playlists: Dict[SpotifyPlaylistId, SpotifyPlaylist]
     state: MigratorState
 
-    def __init__(self, playlists={}, state=MigratorState.NONE):
+    def __init__(self, 
+                 playlists={}, 
+                 state=MigratorState.NONE, 
+                 already_processed = set(),
+                 failed = set()):
         self.playlists = playlists
         self.state = state
+        self.already_processed = already_processed
+        self.failed = failed
 
 
 class MigratorData(local_storage.LocalSerializable):
@@ -50,6 +56,12 @@ class MigratorData(local_storage.LocalSerializable):
 
     def set_populated(self) -> None:
         self.data.state = MigratorState.POPULATED
+
+    def success(self, playlistId: str) -> None:
+        self.data.already_processed.add(playlistId)
+
+    def failure(self, playlistId: str) -> None:
+        self.data.failed.add(playlistId)
 
     def __eq__(self, other) -> bool:
         if isinstance(other, MigratorData):

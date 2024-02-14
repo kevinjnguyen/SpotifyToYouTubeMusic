@@ -39,6 +39,15 @@ def test_migrator_service_populates_migrator(spotify):
     assert migrator_service.migrator_data.get_state() == MigratorState.POPULATED
 
 
+@patch("service.spotify_music_service.SpotifyMusicService")
+def test_migrator_service_migrate_all_playlists_checks_state(spotify):
+    migrator_file = tempfile.NamedTemporaryFile()
+    migrator_file.close()
+    spotify.get_current_user_playlists = Mock(return_value=single_user_playlists)
+    migrator_service = MigratorService(spotify, migrator_file.name)
+    migrator_service.migrate_all_playlists()
+
+
 def get_current_user_playlists_empty_side_effect():
     return empty_user_playlists
 

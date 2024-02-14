@@ -1,10 +1,16 @@
 import logging
 from model.migrator.migrator_data import MigratorData, MigratorState
+from model.spotify.spotify_playlist import SpotifyPlaylist
 
 from service.spotify_music_service import SpotifyMusicService
 
 
 logger = logging.getLogger(__name__)
+
+
+class MigratorServiceException(Exception):
+    def __init__(self, msg: str):
+        super().__init__(msg)
 
 
 class MigratorService:
@@ -26,4 +32,16 @@ class MigratorService:
         for playlist in current_user_playlists.playlists:
             if not self.migrator_data.contains_playlist(playlist):
                 self.migrator_data.add_playlist(playlist)
+        logger.info(f"Successfully populated: {len(self.migrator_data.data.playlists)} playlists.")
         self.migrator_data.set_populated()
+
+    def migrate_playlist(self, spotify_playlist: SpotifyPlaylist):
+        pass
+
+    def migrate_all_playlists(self):
+        if self.migrator_data.get_state() != MigratorState.POPULATED:
+            raise MigratorServiceException("migrator must be in populated state to migrate")
+
+        for _, playlist in self.migrator_data.data.playlists.items():
+            self.migrate_playlist(playlist)
+        
