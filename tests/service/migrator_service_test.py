@@ -17,34 +17,37 @@ single_user_playlists = CurrentUserPlaylists([generate_playlist(1)])
 
 
 @patch("service.spotify_music_service.SpotifyMusicService")
-def test_migrator_service(spotify):
+@patch("service.youtube_music_service.YoutubeMusicService")
+def test_migrator_service(spotify, youtube):
     migrator_file = tempfile.NamedTemporaryFile()
     migrator_file.close()
 
     spotify.get_current_user_playlists = Mock(return_value=empty_user_playlists)
-    migrator_service = MigratorService(spotify, migrator_file.name)
+    migrator_service = MigratorService(spotify, youtube, migrator_file.name)
     assert migrator_service.spotify == spotify
     assert len(migrator_service.migrator_data.data.playlists) == 0
     assert migrator_service.migrator_data.data.state == MigratorState.POPULATED
 
 
 @patch("service.spotify_music_service.SpotifyMusicService")
-def test_migrator_service_populates_migrator(spotify):
+@patch("service.youtube_music_service.YoutubeMusicService")
+def test_migrator_service_populates_migrator(spotify, youtube):
     migrator_file = tempfile.NamedTemporaryFile()
     migrator_file.close()
 
     spotify.get_current_user_playlists = Mock(return_value=single_user_playlists)
-    migrator_service = MigratorService(spotify, migrator_file.name)
+    migrator_service = MigratorService(spotify, youtube, migrator_file.name)
     assert migrator_service.migrator_data.contains_playlist(single_user_playlists.playlists[0]) == True
     assert migrator_service.migrator_data.get_state() == MigratorState.POPULATED
 
 
 @patch("service.spotify_music_service.SpotifyMusicService")
-def test_migrator_service_migrate_all_playlists_checks_state(spotify):
+@patch("service.youtube_music_service.YoutubeMusicService")
+def test_migrator_service_migrate_all_playlists_checks_state(spotify, youtube):
     migrator_file = tempfile.NamedTemporaryFile()
     migrator_file.close()
     spotify.get_current_user_playlists = Mock(return_value=single_user_playlists)
-    migrator_service = MigratorService(spotify, migrator_file.name)
+    migrator_service = MigratorService(spotify, youtube, migrator_file.name)
     migrator_service.migrate_all_playlists()
 
 

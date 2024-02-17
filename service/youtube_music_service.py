@@ -42,6 +42,9 @@ class YoutubeMusicService(object):
                 time.sleep(amount_to_sleep)
                 attempt += 1
 
+    def delete_playlist(self, playlist_id: str) -> None:
+        self.ytmusic.delete_playlist(playlist_id)
+
     def select_track_id_from_query_results(api_search_results: List[Dict]) -> str:
         if len(api_search_results) == 0:
             raise NoSongFoundException(track)

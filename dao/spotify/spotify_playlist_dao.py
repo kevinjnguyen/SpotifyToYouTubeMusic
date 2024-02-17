@@ -49,6 +49,12 @@ class SpotifyPlaylistDAO:
             next_batch = self.get_playlists(offset=len(playlist_ids))
         return playlist_ids
 
+    def parse_name(api_playlist: Dict[str, str]) -> str:
+        name = api_playlist["name"]
+        if name.strip() == "":
+            name = "Untitled Playlist"
+        return name
+
     def get_playlist(
         self, playlist_id: SpotifyPlaylistId, logger: Optional[Logger] = None
     ) -> spotify_playlist.SpotifyPlaylist:
@@ -58,12 +64,13 @@ class SpotifyPlaylistDAO:
         SpotifyPlaylistDAO.verifyFieldExists(api_playlist, "id")
         id = SpotifyPlaylistId(api_playlist["id"])
         SpotifyPlaylistDAO.verifyFieldExists(api_playlist, "name")
-        name = api_playlist["name"]
+        name = self.parse_name(api_playlist)
         SpotifyPlaylistDAO.verifyFieldExists(api_playlist, "description")
         description = api_playlist["description"]
         logger.info(f"Processing playlist: Name: {name}, Description: {description}")
         tracks = self.get_all_tracks(playlist_id, logger=logger)
         return spotify_playlist.SpotifyPlaylist(name, id, description, tracks)
+
 
     def get_liked_playlist(self) -> spotify_playlist.LikedSongsPlaylist:
         playlist_tracks: List[track.Track] = []
@@ -77,7 +84,7 @@ class SpotifyPlaylistDAO:
             next_batch = self.api.current_user_saved_tracks(offset=len(playlist_tracks))
         return spotify_playlist.LikedSongsPlaylist()
 
-    def get_tracks(self, playlist_id: SpotifyPlaylistId, offset: int = 0, batch_size: int = 100) -> List[track.Track]:
+    def get_tracks(self, playlist_id: SpotifyPlaylistId, offset: int = 0, batch_size: int = 25) -> List[track.Track]:
         playlist_tracks: List[track.Track] = []
         current_playlist_tracks = self.api.playlist_tracks(playlist_id.id, offset=offset, limit=batch_size)
         SpotifyPlaylistDAO.verifyFieldExists(current_playlist_tracks, "items")
@@ -92,7 +99,7 @@ class SpotifyPlaylistDAO:
         tracks: List[track.Track] = []
         logger.info(f"Get tracks for playlist: {playlist_id.id}")
         next_batch = self.get_tracks(playlist_id)
-        while len(next_batch) > 0:
+        while len(next_batch) > 0 and len(tracks) < 1000:
             tracks += next_batch
             logger.info(f"Processed: {len(tracks)} tracks.")
             time.sleep(self.api_delay)

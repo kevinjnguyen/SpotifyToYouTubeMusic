@@ -20,11 +20,7 @@ class MigratorStateful:
     playlists: Dict[SpotifyPlaylistId, SpotifyPlaylist]
     state: MigratorState
 
-    def __init__(self, 
-                 playlists={}, 
-                 state=MigratorState.NONE, 
-                 already_processed = set(),
-                 failed = set()):
+    def __init__(self, playlists={}, state=MigratorState.NONE, already_processed=set(), failed=set()):
         self.playlists = playlists
         self.state = state
         self.already_processed = already_processed

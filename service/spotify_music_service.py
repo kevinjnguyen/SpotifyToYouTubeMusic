@@ -51,6 +51,11 @@ class SpotifyMusicService:
                     child_logger.error(f"Failed to process playlist ID: {playlist_id}: {e}")
                 else:
                     raise SpotifyMusicServiceException(e)
+                
+            if len(all_playlists) % 10 == 0:
+                logger.info(f'Successfully fetched: {len(all_playlists)} / {len(all_playlist_ids)}')
+
+        logger.info(f'Completed playlist retrieval: {len(all_playlists)} total for migration.')
 
         try:
             if include_liked_songs:
