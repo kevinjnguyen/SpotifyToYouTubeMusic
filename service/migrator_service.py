@@ -10,13 +10,26 @@ logger = logging.getLogger(__name__)
 
 
 class MigratorServiceException(Exception):
+    """
+    A generic exception thrown from processing in the migrator service.
+    """
     def __init__(self, msg: str):
         super().__init__(msg)
 
 
 class MigratorService:
+    """
+    Migrator Service populates playlists from Spotify and migrates them to YouTube Music.
+    """
 
     def __init__(self, spotify: SpotifyMusicService, youtube: YoutubeMusicService, migrator_state_file: str):
+        """Creates an instance of a MigratorService.
+
+        Args:
+            spotify (SpotifyMusicService): The Spotify Music Service
+            youtube (YoutubeMusicService): The YouTube Music Service
+            migrator_state_file (str): Name / relative path to store state
+        """
         self.spotify = spotify
         self.youtube = youtube
         self.migrator_data = MigratorData(migrator_state_file)
@@ -24,7 +37,12 @@ class MigratorService:
             self.__populate_migrator()
             self.migrator_data.save()
 
-    def __should_populate(self):
+    def __should_populate(self) -> bool:
+        """Helper method to check if internal list of playlists needs population.
+
+        Returns:
+            bool: True to populate, False if already populated.
+        """
         state = self.migrator_data.get_state()
         if state == MigratorState.NONE:
             return True
@@ -49,12 +67,15 @@ class MigratorService:
             except NoSongFoundException:
                 plog.warning(f"Unable to find track: {track}")
             except Exception as e:
-                plog.error(f"Failed to process playlist due to: {e}")
+                plog.warning(f"Failed to process track: {track.name} due to: {e}")
                 successful = False
+                break
 
         if successful:
+            plog.info('Successful.')
             self.migrator_data.success(spotify_playlist.id)
         else:
+            plog.error(f'Not successful.')
             self.migrator_data.failure(spotify_playlist.id)
 
         self.migrator_data.save()
