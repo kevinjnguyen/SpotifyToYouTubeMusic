@@ -40,7 +40,7 @@ class MigratorService:
 
     def migrate_playlist(self, spotify_playlist: Playlist):
         plog = logger.getChild(spotify_playlist.id)
-        plog.info(f'Migrating playlist: {spotify_playlist.name}')
+        plog.info(f"Migrating playlist: {spotify_playlist.name}")
         youtube_playlist = self.youtube.create_playlist(spotify_playlist.name, spotify_playlist.description)
         successful = True
         for track in spotify_playlist.tracks:

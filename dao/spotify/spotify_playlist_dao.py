@@ -71,7 +71,6 @@ class SpotifyPlaylistDAO:
         tracks = self.get_all_tracks(playlist_id, logger=logger)
         return spotify_playlist.SpotifyPlaylist(name, id, description, tracks)
 
-
     def get_liked_playlist(self) -> spotify_playlist.LikedSongsPlaylist:
         playlist_tracks: List[track.Track] = []
         next_batch = self.api.current_user_saved_tracks()
