@@ -8,7 +8,7 @@ from dao.youtube.youtube_playlist_dao import (
 from dao.youtube.youtube_track_id import YoutubeTrackID
 from model import artist, track
 from model.youtube import youtube_playlist
-from model.youtube.youtube_playlist import YoutubePlaylist
+from model.youtube.youtube_playlist import YoutubePlaylist, YoutubePlaylistId
 
 import pytest
 
@@ -35,7 +35,7 @@ def test_create_playlist(yt):
     yt.create_playlist = create_playlist_side_effect
     dao = YoutubeMusicDAO(yt)
     yt_playlist = dao.create_playlist(playlist_name, playlist_description)
-    assert yt_playlist == YoutubePlaylist(playlist_name, "playlist-id", playlist_description)
+    assert yt_playlist == YoutubePlaylist(playlist_name, YoutubePlaylistId("playlist-id"), playlist_description)
 
 
 @patch("ytmusicapi.YTMusic")
@@ -67,7 +67,7 @@ def test_search_track_no_song_found(yt):
 @patch("ytmusicapi.YTMusic")
 def test_add_song_to_playlist(yt):
     test_track = track.Track("some-track", "some-id", 123, artist.Artist("some-artist", "some-id-art"))
-    test_playlist = youtube_playlist.YoutubePlaylist("some-playlist", "some-id", "some-description")
+    test_playlist = youtube_playlist.YoutubePlaylist("some-playlist", YoutubePlaylistId("some-id"), "some-description")
     yt.search = search_track_side_effect
     dao = YoutubeMusicDAO(yt)
     dao.add_song_to_playlist(test_track, test_playlist)
@@ -77,7 +77,7 @@ def test_add_song_to_playlist(yt):
 @patch("ytmusicapi.YTMusic")
 def test_add_song_to_playlist_no_songs_found(yt):
     test_track = track.Track("some-track", "some-id", 123, artist.Artist("some-artist", "some-id-art"))
-    test_playlist = youtube_playlist.YoutubePlaylist("some-playlist", "some-id", "some-description")
+    test_playlist = youtube_playlist.YoutubePlaylist("some-playlist", YoutubePlaylistId("some-id"), "some-description")
     yt.search = search_tracks_no_songs_side_effect
     dao = YoutubeMusicDAO(yt)
     with pytest.raises(NoSongFoundException):
@@ -85,7 +85,7 @@ def test_add_song_to_playlist_no_songs_found(yt):
 
 
 def create_playlist_side_effect(name, description):
-    return "playlist-id"
+    return YoutubePlaylistId("playlist-id")
 
 
 def create_playlist_failed_side_effect(name, description):
