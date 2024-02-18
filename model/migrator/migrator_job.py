@@ -17,7 +17,7 @@ class NoSuchJobException(Exception):
 class Job(object):
     from_playlist: spotify_playlist.SpotifyPlaylist
 
-    def __init__(self, from_playlist: spotify_playlist.SpotifyPlaylist, to_playlist: youtube_playlist.YouTubePlaylist):
+    def __init__(self, from_playlist: spotify_playlist.SpotifyPlaylist, to_playlist: youtube_playlist.YoutubePlaylist):
         self.from_playlist = from_playlist
         self.to_playlist = to_playlist
         self.current_track_index = 0

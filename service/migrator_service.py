@@ -13,6 +13,7 @@ class MigratorServiceException(Exception):
     """
     A generic exception thrown from processing in the migrator service.
     """
+
     def __init__(self, msg: str):
         super().__init__(msg)
 
@@ -72,10 +73,10 @@ class MigratorService:
                 break
 
         if successful:
-            plog.info('Successful.')
+            plog.info("Successful.")
             self.migrator_data.success(spotify_playlist.id)
         else:
-            plog.error(f'Not successful.')
+            plog.error(f"Not successful.")
             self.migrator_data.failure(spotify_playlist.id)
 
         self.migrator_data.save()

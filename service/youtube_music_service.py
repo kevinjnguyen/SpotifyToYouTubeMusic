@@ -13,12 +13,12 @@ class YoutubeMusicService(object):
         self.ytmusic = ytmusicapi.YTMusic(auth_param)
         self.retry_attempts = retry_attempts
 
-    def create_playlist(self, name: str, description: str) -> youtube_playlist.YouTubePlaylist:
+    def create_playlist(self, name: str, description: str) -> youtube_playlist.YoutubePlaylist:
         attempt = 1
         while True:
             try:
                 playlist_id = self.ytmusic.create_playlist(name, description)
-                return youtube_playlist.YouTubePlaylist(name, playlist_id, description)
+                return youtube_playlist.YoutubePlaylist(name, playlist_id, description)
             except Exception as e:
                 if attempt == self.retry_attempts:
                     raise e
@@ -50,10 +50,10 @@ class YoutubeMusicService(object):
             raise NoSongFoundException(track)
         return api_search_results[0]["videoId"]
 
-    def add_song_to_playlist(self, query: track.Track, playlist: youtube_playlist.YouTubePlaylist) -> None:
+    def add_song_to_playlist(self, query: track.Track, playlist: youtube_playlist.YoutubePlaylist) -> None:
         return self.add_songs_to_playlist([query], playlist)
 
-    def add_songs_to_playlist(self, query: List[track.Track], playlist: youtube_playlist.YouTubePlaylist) -> None:
+    def add_songs_to_playlist(self, query: List[track.Track], playlist: youtube_playlist.YoutubePlaylist) -> None:
         attempt = 1
         while True:
             try:
