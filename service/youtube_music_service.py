@@ -5,7 +5,12 @@ from model import track
 from model.youtube import youtube_playlist
 
 
-class YoutubeMusicService(object):
+class YoutubeMusicServiceException(Exception):
+    def __init__(self, msg: str):
+        super().__init__(msg)
+
+
+class YoutubeMusicService:
     oauth_file_name = "oauth.json"
     default_retry_attempts = 3
 
