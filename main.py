@@ -1,7 +1,6 @@
 import logging
 import sys
 
-from model.migrator import migrator_data
 from service import spotify_music_service, youtube_music_service, migrator_service
 
 
